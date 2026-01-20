@@ -1,38 +1,44 @@
-import { createContext, useContext, useState } from "react"
+// Counter Application using context API vs Using Recoil Library
 
-const BulbContext = createContext();   //defined the context
+// 1. Using Context API
+import { createContext, useContext, useState } from "react";
 
-function App() {
-const [bulbOn, SetBulbOn] = useState(true);      //provided the context
-return <div>
-  <BulbContext.Provider value ={{bulbOn : bulbOn, SetBulbOn : SetBulbOn }}> 
-      <LightBulb />
-  </BulbContext.Provider>
-</div>
+const CountContext = createContext();
+function App(){
+    return <div>
+         <Parent />
+    </div>
+}
+function CountContextprovider({children}){
+    const [count , setCount] = useState(0);
+    return (<CountContext.Provider value = {{count, setCount}}>{children}</CountContext.Provider>)
+}
+function Parent (){
+  return(
+    <CountContextprovider>
+    <Value />
+    <Increase />
+    <Decrease />
+    </CountContextprovider>
+  )
+}
+function Value(){
+    const {count} = useContext(CountContext)
+    return <div>
+      Count : {count}
+    </div>
+}
+function Increase(){   
+    const {setCount} = useContext(CountContext) 
+    return <button onClick={() => setCount(count => count+1)}>Increase</button>
+}
+function Decrease(){
+    const {setCount} = useContext(CountContext) 
+    return <button onClick={() => setCount(count => count-1)}>Decrease</button>
 }
 
-function LightBulb(){
-  return <div>
-  <BulbState />
-  <ToggleBulbState/>
- </div>
-}
+export default App;
 
-function BulbState(){
-   const {bulbOn} = useContext(BulbContext);       //consumed the context
-  return <div>
-     {bulbOn ? "Bulb on" : "Bulb off"}
-  </div>
-}
 
-function ToggleBulbState(){     //but need to be used here : here come rolling state
-  const {bulbOn, SetBulbOn} = useContext(BulbContext);
-  function toggle(){
-    SetBulbOn (!bulbOn)
-  }
- return <div>
-    <button onClick={toggle}>Toggle the bulb</button>
-  </div>
-}
+// 2. USing Recoil Library
 
-export default App
