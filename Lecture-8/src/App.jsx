@@ -1,50 +1,93 @@
-// -------------------Using Memo------------------------
-import { memo, useEffect, useState } from "react";
+import { RecoilRoot, useRecoilValue, useSetRecoilState } from "recoil";
+import { counterAtom, evenSelector } from "./store/atoms/counter";
+
 function App() {
   return (
     <div>
-      <Counter />
+      <RecoilRoot>
+        <Buttons />
+        <Counter />
+        <IsEven />
+      </RecoilRoot>
     </div>
   );
 }
-function Counter() {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    setInterval(() => {
-      setCount((c) => c + 1);
-    }, 3000);
-  }, []);
-  return (
-    <div>
-      <CurrentCount />
-      <Increase />
-      <Decrease />
-    </div>
-  );
-}
-// method 1
-// const MemoizedCurrentCount = memo(CurrentCount)
 
-// method 2
-const CurrentCount = memo(function () {
-  return <div>1</div>;
-});
-const Increase = memo(function () {
+function Buttons() {
+  const setCount = useSetRecoilState(counterAtom);
+  function increase() {
+    setCount((c) => c + 2);
+  }
+  function decrease() {
+    setCount((c) => c - 1);
+  }
   return (
     <div>
-      <button>Increase</button>
+      <button onClick={increase}>Increase</button>
+      <button onClick={decrease}>Decrease</button>
     </div>
   );
-});
-const Decrease = memo(function () {
-  return (
-    <div>
-      <button>Decrease</button>
-    </div>
-  );
-});
+}
+
+function Counter() {
+  const count = useRecoilValue(counterAtom);
+  return <div>{count}</div>;
+}
+
+function IsEven() {
+  const even = useRecoilValue(evenSelector);
+  return <div>{even ? "Even" : "Odd"}</div>;
+}
 
 export default App;
+
+// -------------------Using Memo------------------------
+// import { memo, useEffect, useState } from "react";
+// function App() {
+//   return (
+//     <div>
+//       <Counter />
+//     </div>
+//   );
+// }
+// function Counter() {
+//   const [count, setCount] = useState(0);
+//   useEffect(() => {
+//     setInterval(() => {
+//       setCount((c) => c + 1);
+//     }, 3000);
+//   }, []);
+//   return (
+//     <div>
+//       <CurrentCount />
+//       <Increase />
+//       <Decrease />
+//     </div>
+//   );
+// }
+// // method 1
+// // const MemoizedCurrentCount = memo(CurrentCount)
+
+// // method 2
+// const CurrentCount = memo(function () {
+//   return <div>1</div>;
+// });
+// const Increase = memo(function () {
+//   return (
+//     <div>
+//       <button>Increase</button>
+//     </div>
+//   );
+// });
+// const Decrease = memo(function () {
+//   return (
+//     <div>
+//       <button>Decrease</button>
+//     </div>
+//   );
+// });
+
+// export default App;
 
 // --------------------Using Recoil--------------------
 // import { RecoilRoot, useRecoilValue, useSetRecoilState } from "recoil";
